@@ -5,67 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <style>
-      #app {
-        max-width: 500px;
-        margin: 80px auto;
-      }
-      .newTask {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items:center;
-      }
-      .newTask > input {
-        min-width: 500px;
-        padding: 10px;
-      }
-      .todos {
-        display: flex;
-        justify-content: space-around;
-        flex-flow: column;
-        position: relative;
-      }
-      .todos > li {
-        display: flex;
-        flex-wrap: wrap;
-        margin: 10px;
-        position: relative;
-      }
-      .todos > li > input {
-        margin-right: 50px;
-      }
-      .todos > li > span {
-        margin:0 50px;
-      }
-      .todos > li > button {
-        background: red;
-        position: absolute;
-        right: 0;
-        top: 0
-      }
-    </style>
+    <link rel="stylesheet" href="app.css">
 </head>
 <body>
-  <!--div#app用于Vue初始化;
-    div.newTask>input用于用户输入代办内容
-    ol.todos用于容纳所有的待办，每个代办为一个<li>
-  -->
+  
   <div id="app">
-    <div class="newTask"> 
-      <input type="text" v-model="newTodo" @keypress.enter="addTodo" placeholder="请输入待办的事物">
-    </div>
-    <ol class="todos">
-      <li v-for="todo in todoList">
-        <input type="checkbox" v-model="todo.done">
-        {{todo.title}}
-        <!-- 👈 加了一个完成与否备选框 -->
-        <span v-if="todo.done">已完成</span>
-        <span v-else>待完成</span>
-        <!-- 👈 加了一个删除按钮 -->
-        <button @click="removeTodo">删除</button>  
-      </li>
-    </ol>
+    <section id="signIn-signUp" v-if="!currentUser">
+      <h1>高效Todo每日待办</h1> 
+      <img src="https://i.loli.net/2017/08/27/59a19dc06f77f.jpg" alt="login-image"/>
+      <div class="tab">
+        <div class="tab-nav">
+          <label><input type="radio" name="type" value="signUp" v-model="actionType"><i></i>注册</label>
+          <label><input type="radio" name="type" value="login" v-model="actionType"><i></i>登录</label>
+        </div>
+        <div class="signUp" v-if="actionType === 'signUp'">
+          <form v-on:submit.prevent="signUp">
+            <div class="formRow">
+              <label>用户名</label>
+              <input type="text" v-model="formData.username" placeholder="用户名不少于3位">
+            </div>
+            <div class="formRow">
+              <label>邮箱</label>
+              <input type="text" v-model="formData.email" placeholder="邮箱格式为xx@xx.com">
+            </div>
+            <div class="formRow">
+              <label>密码</label>
+              <input type="password" v-model="formData.password" placeholder="密码不少于6位">
+            </div>
+            <div class="formActions">
+              <input type="submit" value="注册">
+            </div>
+          </form>
+          <div class="login" v-if="actionType === 'login'">
+            <form v-on:submit.prevent="login">
+              <div class="formRow">
+                <label>用户名</label>
+                <input type="text" v-model="formData.username" placeholder="请输入用户名">
+              </div>
+              <div class="formRow">
+                <label>密码</label>
+                <input type="password" v-model="formData.username" placeholder="请输入密码">
+              </div>
+              <div class="formAction">
+                <input type="submit" value="登录">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="todo" v-if="currentUser">
+      <nav class="header">
+        <h1>
+          {{this.formData.username}}
+        </h1>
+      </nav>
+      <!--div#app用于Vue初始化;
+      div.newTask>input用于用户输入代办内容
+      ol.todos用于容纳所有的待办，每个代办为一个<li>
+      -->
+      <div class="newTask"> 
+        <input type="text" v-model="newTodo" @keypress.enter="addTodo" placeholder="请输入待办的事物,Enter">
+      </div>
+      <ol class="todos">
+        <li v-for="todo in todoList">
+          <input type="checkbox" v-model="todo.done">
+          <span class="content">{{todo.title}}</span>
+          <!-- 👈 加了一个完成与否备选框 -->
+          <span v-if="todo.done">已完成</span>
+          <span v-else>待完成</span>
+          <!-- 👈 加了一个删除按钮 -->
+          <button @click="removeTodo">X</button>  
+        </li>
+      </ol>
+    </section>
   </div>
 
 <script src="bundle.js"></script>

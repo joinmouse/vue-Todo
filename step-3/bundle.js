@@ -86,10 +86,26 @@ var app = new _vue2.default({
     addTodo: function addTodo() {
       this.todoList.push({
         title: this.newTodo,
-        createdAt: new Date()
+        createdAt: new Date(),
+        done: false //添加done属性
       });
       this.newTodo = ''; //输入后变为空
+    },
+    removeTodo: function removeTodo(todo) {
+      var index = this.todoList.indexOf(todo); // Array.prototype.indexOf 是ES5新加的 API
+      this.todoList.splice(index, 1);
     }
+  },
+  create: function create() {
+    var _this = this;
+
+    window.onbeforeunload = function () {
+      var dataString = JSON.stringify(_this.todoList); // JSON 文档: 
+      window.localStorage.setItem('myTodos', dataString); // localStorage文档
+    };
+    var oldDataString = window.localStorage.getItem('myTodos');
+    var oldData = JSON.parse(oldDataString);
+    this.todoList = oldData || [];
   }
 }); //import xxx from 'path' => 默认导入模块
 

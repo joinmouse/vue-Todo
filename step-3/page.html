@@ -5,6 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <style>
+      #app {
+        max-width: 500px;
+        margin: 80px auto;
+      }
+      .newTask {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items:center;
+      }
+      .newTask > input {
+        min-width: 500px;
+        padding: 10px;
+      }
+      .todos {
+        display: flex;
+        justify-content: space-around;
+        flex-flow: column;
+        position: relative;
+      }
+      .todos > li {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 10px;
+        position: relative;
+      }
+      .todos > li > input {
+        margin-right: 50px;
+      }
+      .todos > li > span {
+        margin:0 50px;
+      }
+      .todos > li > button {
+        background: red;
+        position: absolute;
+        right: 0;
+        top: 0
+      }
+    </style>
 </head>
 <body>
   <!--div#app用于Vue初始化;
@@ -13,7 +53,7 @@
   -->
   <div id="app">
     <div class="newTask"> 
-      <input type="text" v-model="newTodo" @keypress.enter="addTodo">
+      <input type="text" v-model="newTodo" @keypress.enter="addTodo" placeholder="请输入待办的事物">
     </div>
     <ol class="todos">
       <li v-for="todo in todoList">
@@ -21,9 +61,9 @@
         {{todo.title}}
         <!-- 👈 加了一个完成与否备选框 -->
         <span v-if="todo.done">已完成</span>
-        <span v-else>未完成</span>
+        <span v-else>待完成</span>
         <!-- 👈 加了一个删除按钮 -->
-        <button @click="removeTodo">X</button>  
+        <button @click="removeTodo">删除</button>  
       </li>
     </ol>
   </div>

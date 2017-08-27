@@ -327,6 +327,14 @@ var app = new _vue2.default({
       this.saveOrUpdateTodos(); //// 不能再用 this.saveTodos() 了
     },
 
+    saveOrUpdateTodos: function saveOrUpdateTodos() {
+      if (this.todoList.id) {
+        this.updateTodos();
+      } else {
+        this.saveTodos();
+      }
+    },
+
     saveTodos: function saveTodos() {
       var _this2 = this;
 
@@ -358,14 +366,6 @@ var app = new _vue2.default({
       avTodos.save().then(function () {
         console.log('更新成功');
       });
-    },
-
-    saveOrUpdateTodos: function saveOrUpdateTodos() {
-      if (this.todoList.id) {
-        this.updateTodos();
-      } else {
-        this.saveTodos();
-      }
     },
 
     fetchTodos: function fetchTodos() {

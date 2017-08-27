@@ -285,41 +285,50 @@ var app = new _vue2.default({
     actionType: 'signUp',
     formData: {
       username: '',
-      emial: '',
+      email: '',
       password: ''
     },
-    currentUser: null, ///LeanCloud文档: AV.User.current() 可以获取当前登录的用户
-    newTodo: '', //newTodo作为input的值
-    todoList: [] //todoList数组作为所有待办事项的容器
+    newTodo: '',
+    todoList: [],
+    currentUser: null //LeanCloud 文档说 AV.User.current() 可以获取当前登录的用户
   },
+  created: function created() {
+    var _this = this;
+
+    window.onbeforeunload = function () {
+
+      window.localStorage.setItem('myTodos', dataString);
+      //获取newTodo未发布内容
+      var oneditString = JSON.stringify(_this.newTodo);
+      window.localStorage.setItem('typeTodo', oneditString);
+    };
+
+    //检查用户是否登录
+    this.currentUser = this.getCurrentUser();
+
+    //获取 User 的 AllTodos
+    this.fetchTodos(); // 将原来写的的一堆代码取一个名字叫做 fetchTodos
+
+    //本地保存newTodo未发布内容
+    var uncompleteDataString = window.localStorage.getItem('typeTodo');
+    var uncompleteData = JSON.parse(uncompleteDataString);
+    this.newTodo = uncompleteData || [];
+  },
+
   methods: {
+
     addTodo: function addTodo() {
       this.todoList.push({
         title: this.newTodo,
-        done: false //添加done属性
+        createdAt: new Date(),
+        done: false //添加一个 done 属性
       });
-      this.newTodo = ''; //输入后变为空
-      this.saveOrUpdateTodos();
+      this.newTodo = ''; //输入完成之后清空newTodo
+      this.saveOrUpdateTodos(); //// 不能再用 this.saveTodos() 了
     },
 
-    saveOrUpdateTodos: function saveOrUpdateTodos() {
-      if (this.todoList.id) {
-        this.updateTodos();
-      } else {
-        this.saveTodos();
-      }
-    },
-    updateTodos: function updateTodos() {
-      //JSON 在序列化这个有 id 的数组的时候，会得出怎样的结果？
-      var dataString = JSON.stringify(this.todoList);
-      var avTodos = _leancloudStorage2.default.Object.createWithoutData('AllTodos', this.todoList.id);
-      avTodos.set('content', dataString);
-      avTodos.save().then(function () {
-        console.log('更新成功');
-      });
-    },
     saveTodos: function saveTodos() {
-      var _this = this;
+      var _this2 = this;
 
       var dataString = JSON.stringify(this.todoList);
       var AVTodos = _leancloudStorage2.default.Object.extend('AllTodos');
@@ -333,37 +342,58 @@ var app = new _vue2.default({
       avTodos.set('content', dataString);
       avTodos.setACL(acl); //设置访问控制
       avTodos.save().then(function (todo) {
-        _this.todoList.id = todo.id; //一定要把 id 挂到 this.todoList 上，否则下次就不会调用 updateTodos 了
+        //保存成功后，执行其他逻辑
+        _this2.todoList.id = todo.id; //一定要把 id 挂到 this.todoList 上，否则下次就不会调用 updateTodos 了
         console.log('保存成功');
       }, function (error) {
         alert('保存失败');
       });
     },
 
-    removeTodo: function removeTodo(todo) {
-      var index = this.todoList.indexOf(todo); // Array.prototype.indexOf 是ES5新加的 API
-      this.todoList.splice(index, 1);
+    updateTodos: function updateTodos() {
+      //先看文档 https://leancloud.cn/docs/leanstorage_guide-js.html#更新对象
+      var dataString = JSON.stringify(this.todoList); //JSON 在序列化这个有 id 的数组的时候，会得出怎样的结果？
+      var avTodos = _leancloudStorage2.default.Object.createWithoutData('AllTodos', this.todoList.id);
+      avTodos.set('content', dataString);
+      avTodos.save().then(function () {
+        console.log('更新成功');
+      });
+    },
+
+    saveOrUpdateTodos: function saveOrUpdateTodos() {
+      if (this.todoList.id) {
+        this.updateTodos();
+      } else {
+        this.saveTodos();
+      }
     },
 
     fetchTodos: function fetchTodos() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this.currentUser) {
         var query = new _leancloudStorage2.default.Query('AllTodos');
         query.find().then(function (todos) {
-          var avAllTodos = todo[0]; //理论上 AllTodos 只有一个，所以我们取结果的第一项
+          var avAllTodos = todos[0]; //理论上 AllTodos 只有一个，所以我们取结果的第一项
           var id = avAllTodos.id;
-          _this2.todoList = JSON.parse(avAllTodos.attributes.content);
-          _this2.todoList.id = id; //为什么给 todoList 这个数组设置 id？因为数组也是对象啊
+          _this3.todoList = JSON.parse(avAllTodos.attributes.content);
+          _this3.todoList.id = id; //为什么给 todoList 这个数组设置 id？因为数组也是对象啊
         }, function (error) {
-          console.log('error');
+          console.error(error);
         });
       }
     },
 
+    //删除功能
+    removeTodo: function removeTodo(todo) {
+      var index = this.todoList.indexOf(todo); // Array.prototype.indexOf 是 ES 5 新加的 API
+      this.todoList.splice(index, 1);
+      this.saveOrUpdateTodos(); //// 不能再用 this.saveTodos() 了
+    },
+
     //注册
     signUp: function signUp() {
-      var _this3 = this;
+      var _this4 = this;
 
       // 新建 AVUser 对象实例
       var user = new _leancloudStorage2.default.User();
@@ -375,21 +405,21 @@ var app = new _vue2.default({
       user.setPassword(this.formData.password);
 
       //正则判断用户注册信息
-      if (/^\w+@[\w-]+\.\w+(\.\w)+?$/.tset(this.formData.email)) {
+      if (/^\w+@[\w-]+\.\w+(\.\w+)?$/.test(this.formData.email)) {
         if (/\w{3,}/.test(this.formData.username)) {
           if (/\w{6,}/.test(this.formData.password)) {
             user.signUp().then(function (loginedUser) {
-              //function使用箭头函数，方便使用this
-              _this3.currentUser = _this3.getCurrentUser; //获取当前登录用户
+              //将 function 改成箭头函数，方便使用 this
+              _this4.currentUser = _this4.getCurrentUser(); //获取当前登录用户
             }, function (error) {
-              alert('注册失败');
+              alert('注册失败，请检查');
               console.log(error);
             });
           } else {
-            alert('密码不少于6个字符');
+            alert("密码不能小于6个字符");
           }
         } else {
-          alert('用户名必须大于三个字符');
+          alert("用户名必须大于3个字符");
         }
       } else {
         alert("邮箱格式不正确");
@@ -398,27 +428,30 @@ var app = new _vue2.default({
 
     //登录
     login: function login() {
-      var _this4 = this;
+      var _this5 = this;
 
       _leancloudStorage2.default.User.logIn(this.formData.username, this.formData.password).then(function (loginedUser) {
-        _this4.currentUser = _this4.getCurrentUser(); //获取当前登录用户
-        _this4.fetchTodos(); //登录成功后读取todos
+        _this5.currentUser = _this5.getCurrentUser(); //获取当前登录用户
+        _this5.fetchTodos(); //登录成功后读取 todos
       }, function (error) {
-        console.log('error');
+        console.log(error);
       });
     },
 
     //获取当前登录用户
     getCurrentUser: function getCurrentUser() {
-      //判断用户是否登录
+      //首先要判断用户是否登录
       var current = _leancloudStorage2.default.User.current();
       if (current) {
         var _AV$User$current = _leancloudStorage2.default.User.current(),
             id = _AV$User$current.id,
             createdAt = _AV$User$current.createdAt,
             username = _AV$User$current.attributes.username;
+        // 我的《ES 6 新特性列表》里面有链接：https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
 
-        return { id: id, username: username };
+
+        return { id: id, username: username, createdAt: createdAt // 看文档：https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Object_initializer#ECMAScript_6%E6%96%B0%E6%A0%87%E8%AE%B0
+        };
       } else {
         return null;
       }
@@ -430,25 +463,7 @@ var app = new _vue2.default({
       this.currentUser = null;
       window.location.reload();
     }
-  },
 
-  create: function create() {
-    var _this5 = this;
-
-    window.onbeforeunload = function () {
-      var dataString = JSON.stringify(_this5.todoList); // JSON文档
-      window.localStorage.setItem('myTodos', dataString); // localStorage文档
-    };
-    //检查用户是否登录
-    this.currentUser = this.getCurrentUser();
-
-    //获取User的Todos
-    this.fetchTodos();
-
-    ////本地保存newTodo未发布内容
-    var uncompleteDataString = window.localStorage.getItem('typeTodo');
-    var uncompleteData = JSON.parse(uncompleteDataString);
-    this.newTodo = uncompleteData || [];
   }
 });
 

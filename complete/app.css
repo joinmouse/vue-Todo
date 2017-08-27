@@ -1,0 +1,200 @@
+/*css reset*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box 
+}
+*::after,*::before {
+  box-sizing: border-box
+}
+ul,ol,li {
+  list-style: none;
+}
+body {
+  font-family: sans-serif;  
+  background: #50e3a4;
+  color: #616473;
+}
+
+/*common css*/
+#app {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width:50%;
+  height: 100%;
+  background-color: #fff;
+  font-family: 'Microsoft Yahei';
+  margin-top: 1.5em;
+  margin-right:auto;
+  margin-left: auto;
+  padding: .8em 0 .8em 0;
+  box-shadow: 0 0 1em hsla(0, 0%, 0%, 0.15);
+}
+
+
+#app > #todo {
+  width: 100%;
+  margin: 10px 20px;
+}
+
+/*最上面的nav栏*/
+#todo .username {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ccc;
+  color: black;
+}
+#todo .username::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+#todo .username .logout {
+  float: right;
+  background: #50e3a4;
+  padding: 0 10px;
+  box-shadow: 0 3px 3px rgba(0,0,0,0.5)
+}
+
+/*输入栏设计*/
+.newTask {
+  margin-top: 20px;
+  width: 100%;
+  text-align: center;
+}
+.newTask > input {
+  width: 100%;
+  padding: 0 8px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 16px;
+  border: 1px #D4D6D7 solid;
+  background: #F1F3F4;
+  border-radius: 6px;
+}
+
+.todos {
+  width: 100%;
+  margin-top: 20px;
+  margin-left: 20px;
+  position: relative;
+}
+.todos li {
+  position: relative;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+.todos li .checkBox {
+  width: 20px;
+  height: 20px;
+  border: none;
+}
+.todos li .content {
+  margin-left: 50px;
+}
+.todos li .complete {
+  position: absolute;
+  right: 200px;
+  top: 0;
+}
+.todos li .remove {
+  position: absolute;
+  right: 50px;
+  top: 0;
+  padding: .3em 1em;
+  outline: none;
+  border: none;
+  background: red;
+  color: white;
+  box-shadow: 0 3px 3px rgba(0,0,0,0.5)
+}
+
+/**登录注册**/
+#signInAndSignUp {
+  /*全屏*/      position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+  /*内容居中*/  display: flex; justify-content: center; align-items: center;
+  background-color: #fff;
+}
+
+#signInAndSignUp .tab {
+  float:left;
+  margin-left:2em;
+}
+
+#signInAndSignUp>h1 {
+  position:absolute;
+  top:1em;
+  left:50%;
+  margin-left:-3.8em;
+}
+
+
+.tab-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tab>.tab-nav label {
+  padding-left:1.5em;
+  font-size:14px;
+}
+
+.tab-nav i {
+  margin-right:.5em;
+}
+
+#signInAndSignUp form {
+  margin-top:.8em;
+}
+
+#signInAndSignUp form > .formRow {
+  display: flex;
+  padding: .7em .5em;
+}
+
+#signInAndSignUp form > .formRow > label {
+  color: #888;
+  font-size: 13px;
+}
+
+#signInAndSignUp form > .formRow > label:first-child {
+  width: 4em;
+  padding: 0.2em 0;
+}
+
+#signInAndSignUp form > .formRow > input {
+  width: 100%;
+  padding: .5em;
+  outline: none;
+  border: 1px solid #aaa;
+  color: #3e434f;
+  background: transparent;
+}
+
+#signInAndSignUp form > .formActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#signInAndSignUp form > .formActions input[type="submit"] {
+  width:12.5em;
+  text-align: center;
+  padding: .5em 1em;
+  color: #fff;
+  border: 1px solid #50e3a4;
+  outline: none;
+  background: #50e3a4;
+  border-radius: 2px;
+  margin-left:3.4em;
+}
+
+#signInAndSignUp form > .formActions input[type="submit"]:hover {
+  color: white;
+  border: 1px solid #3ecc8f;
+  background: #3ecc8f;
+  cursor: pointer;
+}

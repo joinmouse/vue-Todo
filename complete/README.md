@@ -4,8 +4,6 @@
 3、webpack  
 4、open page.html 
 
-### vue命令使用  
-v-model  => 双向绑定  
 
 
 

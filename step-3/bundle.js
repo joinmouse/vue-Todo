@@ -301,6 +301,7 @@ var app = new _vue2.default({
       this.newTodo = ''; //输入后变为空
       this.saveOrUpdateTodos();
     },
+
     saveOrUpdateTodos: function saveOrUpdateTodos() {
       if (this.todoList.id) {
         this.updateTodos();
@@ -317,17 +318,125 @@ var app = new _vue2.default({
         console.log('更新成功');
       });
     },
+    saveTodos: function saveTodos() {
+      var _this = this;
+
+      var dataString = JSON.stringify(this.todoList);
+      var AVTodos = _leancloudStorage2.default.Object.extend('AllTodos');
+      var avTodos = new AVTodos();
+
+      //添加访问控制
+      var acl = new _leancloudStorage2.default.ACL();
+      acl.setReadAccess(_leancloudStorage2.default.User.current(), true); //只有这个 user 能读
+      acl.setWriteAccess(_leancloudStorage2.default.User.current(), true); //只有这个 user 能写
+
+      avTodos.set('content', dataString);
+      avTodos.setACL(acl); //设置访问控制
+      avTodos.save().then(function (todo) {
+        _this.todoList.id = todo.id; //一定要把 id 挂到 this.todoList 上，否则下次就不会调用 updateTodos 了
+        console.log('保存成功');
+      }, function (error) {
+        alert('保存失败');
+      });
+    },
 
     removeTodo: function removeTodo(todo) {
       var index = this.todoList.indexOf(todo); // Array.prototype.indexOf 是ES5新加的 API
       this.todoList.splice(index, 1);
+    },
+
+    fetchTodos: function fetchTodos() {
+      var _this2 = this;
+
+      if (this.currentUser) {
+        var query = new _leancloudStorage2.default.Query('AllTodos');
+        query.find().then(function (todos) {
+          var avAllTodos = todo[0]; //理论上 AllTodos 只有一个，所以我们取结果的第一项
+          var id = avAllTodos.id;
+          _this2.todoList = JSON.parse(avAllTodos.attributes.content);
+          _this2.todoList.id = id; //为什么给 todoList 这个数组设置 id？因为数组也是对象啊
+        }, function (error) {
+          console.log('error');
+        });
+      }
+    },
+
+    //注册
+    signUp: function signUp() {
+      var _this3 = this;
+
+      // 新建 AVUser 对象实例
+      var user = new _leancloudStorage2.default.User();
+      // 设置用户名
+      user.setUsername(this.formData.username);
+      // 设置邮箱
+      user.setEmail(this.formData.email);
+      // 设置密码
+      user.setPassword(this.formData.password);
+
+      //正则判断用户注册信息
+      if (/^\w+@[\w-]+\.\w+(\.\w)+?$/.tset(this.formData.email)) {
+        if (/\w{3,}/.test(this.formData.username)) {
+          if (/\w{6,}/.test(this.formData.password)) {
+            user.signUp().then(function (loginedUser) {
+              //function使用箭头函数，方便使用this
+              _this3.currentUser = _this3.getCurrentUser; //获取当前登录用户
+            }, function (error) {
+              alert('注册失败');
+              console.log(error);
+            });
+          } else {
+            alert('密码不少于6个字符');
+          }
+        } else {
+          alert('用户名必须大于三个字符');
+        }
+      } else {
+        alert("邮箱格式不正确");
+      }
+    },
+
+    //登录
+    login: function login() {
+      var _this4 = this;
+
+      _leancloudStorage2.default.User.logIn(this.formData.username, this.formData.password).then(function (loginedUser) {
+        _this4.currentUser = _this4.getCurrentUser(); //获取当前登录用户
+        _this4.fetchTodos(); //登录成功后读取todos
+      }, function (error) {
+        console.log('error');
+      });
+    },
+
+    //获取当前登录用户
+    getCurrentUser: function getCurrentUser() {
+      //判断用户是否登录
+      var current = _leancloudStorage2.default.User.current();
+      if (current) {
+        var _AV$User$current = _leancloudStorage2.default.User.current(),
+            id = _AV$User$current.id,
+            createdAt = _AV$User$current.createdAt,
+            username = _AV$User$current.attributes.username;
+
+        return { id: id, username: username };
+      } else {
+        return null;
+      }
+    },
+
+    //退出登录
+    logout: function logout() {
+      _leancloudStorage2.default.User.logOut();
+      this.currentUser = null;
+      window.location.reload();
     }
   },
+
   create: function create() {
-    var _this = this;
+    var _this5 = this;
 
     window.onbeforeunload = function () {
-      var dataString = JSON.stringify(_this.todoList); // JSON文档
+      var dataString = JSON.stringify(_this5.todoList); // JSON文档
       window.localStorage.setItem('myTodos', dataString); // localStorage文档
     };
     //检查用户是否登录

@@ -1,19 +1,54 @@
-//import xxx from 'path' => 默认导入模块
 import Vue from 'vue'
+import AV from 'leancloud-storage'
+
+let APP_ID = 'FH1m2mhIwPfYcOXTmjll4rC2-gzGzoHsz'
+let APP_KEY = 'H2c4tWeqKad4r7HD59UCwtM8'
+AV.init({
+  appId: APP_ID,
+  appKey: APP_KEY
+})
 
 var app = new Vue({
-  el:'#app',
+  el: '#app',
   data: {
-    newTodo: '',      //newTodo作为input的值
-    todoList: []      //todoList数组作为所有待办事项的容器
+    actionType: 'signUp',
+    formData: {
+      username: '',
+      password: ''
+    },
+    newTodo: '',
+    todoList: []
   },
-  //验证当JS的值发生改变的时候，input.value 就会变
-  //v-model的双向绑定
-  created: function(){ 
-    let i = 0;
-    setInterval(()=>{
-      this.newTodo = i
-      i=i+1
-    },1000)
+  created () {
+    window.onbeforeunload = () => {
+      let dataString = JSON.stringify(this.todoList)
+      window.localStorage.setItem('myTodo', dataString)
+    }
+    let oldDataString = window.localStorage.getItem('myTodo')
+    let oldData = JSON.parse(oldDataString)
+    this.todoList = oldData || []
+  },
+  methods: {
+    addTodo () {
+      this.todoList.push({
+        title: this.newTodo,
+        createdAt: new Date(),
+        done: false
+      })
+      this.newTodo = ''
+    },
+    removeTodo () {
+      let index = this.todoList.indexOf()
+      this.todoList.splice(index,1)
+    },
+    signUp () {
+      let user = new AV.User()
+      user.setUsername(this.formData.username)
+      user.setPassword(this.formData.password)
+      user.signUp().then(function (loginedUser) {
+        //console.log(loginedUser)
+      }, (function(error) {
+      }))
+    }
   }
 })

@@ -313,7 +313,8 @@ var app = new _vue2.default({
       password: ''
     },
     newTodo: '',
-    todoList: []
+    todoList: [],
+    currentUser: null
   },
   created: function created() {
     var _this = this;
@@ -347,6 +348,19 @@ var app = new _vue2.default({
       user.signUp().then(function (loginedUser) {
         //console.log(loginedUser)
       }, function (error) {});
+    },
+    getCurrentUser: function getCurrentUser() {
+      var _AV$User$current = _leancloudStorage2.default.User.current(),
+          id = _AV$User$current.id,
+          createdAt = _AV$User$current.createdAt,
+          username = _AV$User$current.attributes.username;
+
+      return { id: id, username: username, createdAt: createdAt };
+    },
+    logout: function logout() {
+      _leancloudStorage2.default.User.logOut();
+      this.currentUser = null;
+      window.location.reload();
     }
   }
 });

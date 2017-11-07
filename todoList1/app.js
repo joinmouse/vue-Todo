@@ -17,7 +17,8 @@ var app = new Vue({
       password: ''
     },
     newTodo: '',
-    todoList: []
+    todoList: [],
+    currentUser: null
   },
   created () {
     window.onbeforeunload = () => {
@@ -47,8 +48,20 @@ var app = new Vue({
       user.setPassword(this.formData.password)
       user.signUp().then(function (loginedUser) {
         //console.log(loginedUser)
-      }, (function(error) {
+      }, (function (error) {
       }))
+    },
+    signIn () {
+      
+    },
+    getCurrentUser () {
+      let {id, createdAt, attributes: {username}} = AV.User.current()
+      return {id, username, createdAt}
+    },
+    logout () {
+      AV.User.logOut()
+      this.currentUser = null
+      window.location.reload()
     }
   }
 })

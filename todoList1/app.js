@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import AV from 'leancloud-storage'
 
-let APP_ID = 'FH1m2mhIwPfYcOXTmjll4rC2-gzGzoHsz'
-let APP_KEY = 'H2c4tWeqKad4r7HD59UCwtM8'
+let APP_ID = '8axnRtGoxCJhEzsvNPEAHnol-gzGzoHsz';
+let APP_KEY = '0YH4XkYflb4CUPfA743TGj8G';
 AV.init({
   appId: APP_ID,
   appKey: APP_KEY
-})
+});
 
 var app = new Vue({
   el: '#app',
@@ -18,47 +18,55 @@ var app = new Vue({
     },
     newTodo: '',
     todoList: [],
-    currentUser: null
+    currentUser: null,
   },
-  created () {
-    window.onbeforeunload = () => {
-      let dataString = JSON.stringify(this.todoList)
-      window.localStorage.setItem('myTodo', dataString)
+  created: function(){
+    // onbeforeunload文档：https://developer.mozilla.org/zh-CN/docs/Web/API/Window/onbeforeunload
+    window.onbeforeunload = ()=>{
+      let dataString = JSON.stringify(this.todoList) // JSON 文档: https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/JSON
+      window.localStorage.setItem('myTodos', dataString) // 看文档https://developer.mozilla.org/zh-CN/docs/Web/API/Window/localStorage
     }
-    let oldDataString = window.localStorage.getItem('myTodo')
+
+    let oldDataString = window.localStorage.getItem('myTodos')
     let oldData = JSON.parse(oldDataString)
     this.todoList = oldData || []
+
   },
   methods: {
-    addTodo () {
+    addTodo: function(){
       this.todoList.push({
         title: this.newTodo,
         createdAt: new Date(),
-        done: false
+        done: false // 添加一个 done 属性
       })
       this.newTodo = ''
     },
-    removeTodo () {
+    removeTodo: function(todo){
       let index = this.todoList.indexOf()
-      this.todoList.splice(index,1)
+      this.todoList.splice(index,1) 
     },
-    signUp () {
-      let user = new AV.User()
-      user.setUsername(this.formData.username)
-      user.setPassword(this.formData.password)
-      user.signUp().then(function (loginedUser) {
-        //console.log(loginedUser)
-      }, (function (error) {
-      }))
+    signUp: function () {
+      let user = new AV.User();
+      user.setUsername(this.formData.username);
+      user.setPassword(this.formData.password);
+      user.signUp().then((loginedUser) => {
+        this.currentUser = this.getCurrentUser()
+      }, (error) => {
+        alert('注册失败')
+      });
     },
-    signIn () {
-      
+    login: function () {
+      AV.User.logIn(this.formData.username, this.formData.password).then((loginedUser) => {
+        this.currentUser = this.getCurrentUser()
+      }, function (error) {
+        alert('登录失败')
+      });
     },
-    getCurrentUser () {
+    getCurrentUser: function () {
       let {id, createdAt, attributes: {username}} = AV.User.current()
-      return {id, username, createdAt}
+       return {id, username, createdAt} 
     },
-    logout () {
+    logout: function () {
       AV.User.logOut()
       this.currentUser = null
       window.location.reload()

@@ -1,6 +1,34 @@
 <html>
     <head>
       <meta charset=utf-8>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <style>
+        #app {
+          padding-top: 100px;
+          width: 800px;
+          margin: 0 auto;
+        }
+        [v-cloak] {
+          display: none;
+        }
+        .list-item {
+          height: 40px;
+          line-height: 40px;
+        }
+        .list-item > span {
+          display: inline-block;
+          vertical-align: bottom;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+        .btn {
+          margin-top: 10px;
+        }
+        .content {
+          width: 180px;
+        }
+      </style>
     </head>
     <body>
     <div id="app">
@@ -38,17 +66,19 @@
        </section>
    
        <section id="todo" v-if="currentUser">
-        <p><button @click="logout">登出</button></p>
+        <p><span>Hello：{{currentUser.username}}</span><button @click="logout">登出</button></p>
          <div class="newTask">
            <input type="text" v-model="newTodo" @keypress.enter="addTodo">
          </div>
         <ol class="todos">
-          <li v-for="todo in todoList">
-            <input type="checkbox" v-model="todo.done">{{ todo.title }}
-            <span v-if="todo.done">已完成</span>
-            <span v-else>未完成</span>
-  
-            <button @click="removeTodo">X</button>
+          <li v-for="todo in todoList" v-cloak class="list-item">
+            <input type="checkbox" v-model="todo.done">
+            <span class="content">{{todo.title}}</span>
+            <span v-if="todo.done" class="done" style="width: 60px">已完成</span>
+            <span v-else style="width: 60px">未完成</span>
+            <span style="width: 100px">创建时间</span>
+            <span>{{todo.createdAt}}</span>
+            <span><button @click="removeTodo">删除</button></span>
           </li>
         </ol>
       </section>

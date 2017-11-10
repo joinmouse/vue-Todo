@@ -1,0 +1,73 @@
+<html>
+  <head>
+   <meta charset='utf-8'>
+    <title>vue-todo</title>
+    <link rel="stylesheet" href="app.css"/>
+  </head>
+  <body>
+    <div id="app">
+      <section id="signInAndSignUp" v-if="!currentUser">
+        <h1>Todo记录每日待办</h1>
+        <img src="https://i.loli.net/2017/07/29/597bf4963ba50.jpg" alt="login-image"/>
+        <div class="tab">
+          <div class="tab-nav">
+            <label><input type="radio" name="type" value="signUp" v-model="actionType"><i></i>注册</label>
+            <label><input type="radio" name="type" value="login" v-model="actionType"><i></i>登录</label>
+          </div>
+          <div class="signUp" v-if="actionType ==='signUp'">
+            <form @submit.prevent="signUp"><!--注意这里-->
+              <div class="formRow">
+                <label>用户名</label><input type="text" v-model="formData.username" placeholder="用户名不少于3位"><!--注意看这里-->
+              </div>
+              <div class="formRow">
+                <label>邮箱</label><input type="email" v-model="formData.email" placeholder="邮箱格式为xx@xx.com"><!--注意看这里-->
+              </div>
+              <div class="formRow">
+                <label>密码</label><input type="password" v-model="formData.password" placeholder="密码不少于6位"><!--注意看这里-->
+              </div>
+              <div class="formActions">
+                <input type="submit" value="注册">
+              </div>
+            </form>
+          </div>
+          <div class="login" v-if="actionType ==='login'"><!--注意这里-->
+            <form @submit.prevent="login"><!--注意这里-->
+              <div class="formRow">
+                <label>用户名</label><input type="text" v-model="formData.username" placeholder="请输入用户名">
+              </div>
+              <div class="formRow">
+                <label>密码</label><input type="password" v-model="formData.password" placeholder="请输入登录密码">
+              </div>
+              <div class="formActions">
+                <input type="submit" value="登录">
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="todo" v-if="currentUser">
+        <nav class="header">
+          <h1>
+            <i class="icon">&#xe639;</i>{{ this.formData.username }}
+          </h1>
+          <a class="logout-btn" @click="logout"><i class="icon">&#xe606;</i>退出</a>
+        </nav>
+        <div class="newTask">
+          <input type="text" v-model="newTodo" @keypress.enter="addTodo" placeholder="输入待办事项，回车或按Enter添加"/>
+        </div>
+        <ol class="todos">
+          <li v-for="todo in todoList">
+            <input type="checkbox" v-model="todo.done"/>
+            <label class="title">{{ todo.title }}</label>
+            <span class="complete-tip" v-if="todo.done"><i class="icon">&#xe765;</i></span>
+            <!--<span v-else><i class="icon">&#xe602;</i></span>-->
+            <button class="del-btn" @click="removeTodo(todo)">删除</button>
+          </li>
+        </ol>
+        <!--<a class="add-circle"><i class="icon">&#xe638;</i></a>-->
+      </section>
+    </div>
+    <script src="bundle.js"></script>
+  </body>
+</html>

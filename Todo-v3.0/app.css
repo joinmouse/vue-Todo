@@ -1,0 +1,347 @@
+/*V1.0版本样式表*/
+/* css reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+*::after {
+  box-sizing: border-box;
+}
+
+*::before {
+  box-sizing: border-box;
+}
+
+ul, ol, dl {
+  list-style: none;
+}
+
+a {
+  color: #616473;
+}
+
+a:hover {
+  color: #50e3a4;
+}
+
+/* iconfont */
+@font-face {
+  font-family: 'iconfont';  /* project id 348003 */
+  src: url('//at.alicdn.com/t/font_1sjaa9oj69cz0k9.eot');
+  src: url('//at.alicdn.com/t/font_1sjaa9oj69cz0k9.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_1sjaa9oj69cz0k9.woff') format('woff'),
+  url('//at.alicdn.com/t/font_1sjaa9oj69cz0k9.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_1sjaa9oj69cz0k9.svg#iconfont') format('svg');
+}
+
+.icon {
+  font-family: 'iconfont' !important;
+}
+
+i {
+  font-style: normal;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background: #f0efe9;
+  color: #616473;
+}
+
+/* common css */
+#app {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width:50%;
+  height: 100%;
+  background-color: #fff;
+  font-family: 'Microsoft Yahei';
+  margin-top: 1.5em;
+  margin-right:auto;
+  margin-left: auto;
+  padding: .8em 0 .8em 0;
+  box-shadow: 0 0 1em hsla(0, 0%, 0%, 0.15);
+}
+
+#app #todo {
+  width:100%;
+  margin:0 auto;
+}
+
+#app #todo .header {
+  position:relative;
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  background: #fff;
+  padding:.5em;
+  color:#FFF;
+  vertical-align: middle;
+  justify-content: space-between;
+}
+
+#app .header h1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2em;
+  color: #616473;
+  font-weight: normal;
+  margin: 0;
+}
+
+#app .header h1 .icon {
+  color:#50e3a4;
+  font-size: 2em;
+  margin:0 .3em 0 .6em;
+  vertical-align: middle;
+}
+
+#app .header .logout-btn {
+  position:absolute;
+  top:.5em;
+  right:1em;
+  font-size: 1em;
+  color: #616473;
+  display: block;
+  cursor: pointer;
+}
+
+#app .header>.logout-btn>.icon {
+  color:#50e3a4;
+  font-size: 1.1em;
+  margin-right: .2em;
+  vertical-align: middle;
+}
+
+#app .newTask {
+  display: flex;
+  width: 100%;
+  margin-top:1.2em;
+  padding: 1em;
+}
+
+#app .newTask>input {
+  width: 100%;
+  line-height: 1.8;
+  font-size: 16px;
+  height: 3em;
+  padding: .5em;
+  outline: none;
+  border: 1px solid #50e3a4;
+}
+
+::-webkit-input-placeholder {
+  font-family: arial;
+  font-weight: lighter;
+  color: #bbb;
+}
+
+#app .todos {
+  width:100%;
+  padding:.5em;
+  margin:0 auto;
+  height: 100%;
+}
+
+#app .todos> li{
+  display: flex;
+  height: 3em;
+  align-items: center;
+  position:relative;
+  padding:1em;
+  width: 98%;
+  margin: 0 auto;
+  color: #3e434f;
+  border-bottom: 1px solid #eee;
+  transition: .2s all ease;
+}
+
+#app .todos> li:hover{
+  background: rgba(250,250,250,1);
+  border-bottom: 1px solid #81e9bc;
+  transition: .5s all ease;
+}
+
+#app .todos> li:hover .complete-tip {
+  transform: translateX(-1.5em);
+  transition: .3s all;
+}
+
+#app .todos> li> .title {
+  font-size: 1em;
+  padding: .3em;
+  flex: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#app .todos> li input[type="checkbox"] {
+  width:1.2em;
+  height:1.2em;
+  margin-right: .5em;
+  vertical-align: middle;
+}
+
+#app .todos> li input:checked~label {
+  text-decoration: line-through;
+  opacity: .5;
+}
+
+#app .todos> li> .del-btn{
+  z-index: 100;
+  position:absolute;
+  top:25%;
+  right:.5em;
+  border: 1px solid #e0e0e0;
+  background:none;
+  color: #666;
+  outline:none;
+  font-size: .5em;
+  border-radius:3px;
+  padding:.3em .5em;
+  cursor: pointer;
+  opacity: 0;
+}
+
+#app .todos> li> .del-btn:hover {
+  color:#ff4f4a;
+  border: 1px solid #ff4f4a;
+  transition: all .5s;
+  -webkit-transition: all .5s;
+  -o-transition: all .5s;
+  -moz-transition: all .5s;
+}
+
+#app .todos> li:hover .del-btn {
+  opacity: 1;
+  transition: all .5s;
+  -webkit-transition: all .5s;
+  -o-transition: all .5s;
+  -moz-transition: all .5s;
+}
+
+#app .todos> li .complete-tip {
+  margin-left:.3em;
+  margin-right:.5em;
+}
+
+#app .todos> li> .complete-tip i {
+  /*margin-right:1em;*/
+  font-size:2em;
+  font-style: normal;
+  vertical-align:middle;
+  color:#aaa;
+}
+
+#app .add-circle {
+  display: block;
+  width:4em;
+  height:4em;
+  position:absolute;
+  bottom:0;
+  left:50%;
+  margin-left:-2em;
+  margin-bottom:1em;
+}
+
+#app .add-circle .icon {
+  color:#50e3a4;
+  font-size:4em;
+  cursor: pointer;
+}
+
+/**登录注册**/
+#signInAndSignUp {
+  /*全屏*/      position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+  /*内容居中*/  display: flex; justify-content: center; align-items: center;
+  background-color: #fff;
+}
+
+#signInAndSignUp .tab {
+  float:left;
+  margin-left:2em;
+}
+
+#signInAndSignUp>h1 {
+  position:absolute;
+  top:1em;
+  left:50%;
+  margin-left:-3.8em;
+}
+
+
+.tab-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tab>.tab-nav label {
+  padding-left:1.5em;
+  font-size:14px;
+}
+
+.tab-nav i {
+  margin-right:.5em;
+}
+
+#signInAndSignUp form {
+  margin-top:.8em;
+}
+
+#signInAndSignUp form > .formRow {
+  display: flex;
+  padding: .7em .5em;
+}
+
+#signInAndSignUp form > .formRow > label {
+  color: #888;
+  font-size: 13px;
+}
+
+#signInAndSignUp form > .formRow > label:first-child {
+  width: 4em;
+  padding: 0.2em 0;
+}
+
+#signInAndSignUp form > .formRow > input {
+  width: 100%;
+  padding: .5em;
+  outline: none;
+  border: 1px solid #aaa;
+  color: #3e434f;
+  background: transparent;
+}
+
+#signInAndSignUp form > .formActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#signInAndSignUp form > .formActions input[type="submit"] {
+  width:12.5em;
+  text-align: center;
+  padding: .5em 1em;
+  color: #fff;
+  border: 1px solid #50e3a4;
+  outline: none;
+  background: #50e3a4;
+  border-radius: 2px;
+  margin-left:3.4em;
+}
+
+#signInAndSignUp form > .formActions input[type="submit"]:hover {
+  color: white;
+  border: 1px solid #3ecc8f;
+  background: #3ecc8f;
+  cursor: pointer;
+}

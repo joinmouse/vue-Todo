@@ -3,13 +3,18 @@
    <meta charset='utf-8'>
     <title>vue-todo</title>
     <link rel="stylesheet" href="app.css"/>
+    <style>
+      [v-cloak] {
+        display: none;
+      }
+    </style>
   </head>
   <body>
-    <div id="app">
-      <section id="signInAndSignUp" v-if="!currentUser">
+    <div id="app" v-cloak>
+      <section id="signInAndSignUp" v-if="!currentUser" v-cloak>
         <h1>Todo记录每日待办</h1>
         <img src="https://i.loli.net/2017/07/29/597bf4963ba50.jpg" alt="login-image"/>
-        <div class="tab">
+        <div class="tab" v-cloak>
           <div class="tab-nav">
             <label><input type="radio" name="type" value="signUp" v-model="actionType"><i></i>注册</label>
             <label><input type="radio" name="type" value="login" v-model="actionType"><i></i>登录</label>
@@ -46,17 +51,17 @@
         </div>
       </section>
 
-      <section id="todo" v-if="currentUser">
+      <section id="todo" v-if="currentUser" v-cloak>
         <nav class="header">
-          <h1>
+          <h1 v-cloak>
             <i class="icon">&#xe639;</i>{{ this.formData.username }}
-          </h1>
+          </h1 v-cloak>
           <a class="logout-btn" @click="logout"><i class="icon">&#xe606;</i>退出</a>
         </nav>
         <div class="newTask">
           <input type="text" v-model="newTodo" @keypress.enter="addTodo" placeholder="输入待办事项，回车或按Enter添加"/>
         </div>
-        <ol class="todos">
+        <ol class="todos" v-cloak>
           <li v-for="todo in todoList">
             <input type="checkbox" v-model="todo.done"/>
             <label class="title">{{ todo.title }}</label>
